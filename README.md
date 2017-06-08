@@ -1,6 +1,8 @@
 python-cryptocoincharts-api [![Build Status](http://travis-ci.org/Dirrot/python-cryptocoincharts-api.png?branch=master)](http://travis-ci.org/Dirrot/python-cryptocoincharts-api)
 =========================
 
+## Updated for Python 3.6
+
 This is a python2 wrapper class for the cryptocoincharts.info api.
 
  http://www.cryptocoincharts.info/v2/tools/api

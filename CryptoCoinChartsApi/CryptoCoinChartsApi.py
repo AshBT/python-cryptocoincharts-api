@@ -6,29 +6,32 @@ Created on 24.01.2014
 @license: GPL
 @version: 0.2
 
+Updated June 7, 2017 by @t0mj for py3.6
+
 '''
 
-from urllib2 import Request, urlopen, URLError, HTTPError
-from urllib import urlencode
-from Models import Coin, TradingPair
+from urllib.request import Request, urlopen
+from urllib.parse import urlencode
+from urllib.error import URLError, HTTPError
+from CryptoCoinChartsApi.Models import Coin, TradingPair
 import json
 
 class API(object):
     '''
     This class is a wrapper class for the CryptoCoinCharts api.
     '''
-    
+
     API_PATH = "http://api.cryptocoincharts.info/"
-        
+
     def listcoins(self):
         '''
         Use this function to list all coins with their data which are available on cryptocoincharts.
         Usage: http://api.cryptocoincharts.info/listCoins
         '''
         url = self.API_PATH + 'listCoins'
-        
+
         json_data = json.loads(self._getdata(url))
-        
+
         coins = []
         for entry in json_data:
             coin = Coin()
@@ -38,9 +41,9 @@ class API(object):
             coin.price_btc = entry['price_btc']
             coin.volume_btc = entry['volume_btc']
             coins.append(coin)
-        
+
         return coins
-    
+
     def tradingpair(self, pair):
         '''
         Use this function to query price and volume data for ONE trading pair.
@@ -49,9 +52,9 @@ class API(object):
         Usage: http://api.cryptocoincharts.info/tradingPair/[currency1_currency2]
         '''
         url = self.API_PATH + 'tradingPair/' + pair
-        
+
         json_data = json.loads(self._getdata(url))
-        
+
         tradingpair = TradingPair()
         tradingpair.id = json_data['id']
         tradingpair.price = json_data['price']
@@ -63,7 +66,7 @@ class API(object):
         tradingpair.latest_trade = json_data['latest_trade']
 
         return tradingpair
-    
+
     def tradingpairs(self, pairs):
         '''
         Use this function to query price and volume data for MANY trading pairs.
@@ -73,10 +76,10 @@ class API(object):
                http://api.cryptocoincharts.info/tradingPairs/"doge_btc,btc_eur"            
         '''
         url = self.API_PATH + 'tradingPairs/'
-        data = { 'pairs':pairs }
-        
+        data = {'pairs': pairs}
+
         json_data = json.loads(self._getdata(url, data))
-        
+
         tradingpairs = []
         for entry in json_data:
             tradingpair = TradingPair()
@@ -89,21 +92,21 @@ class API(object):
             tradingpair.best_market = entry['best_market']
             tradingpair.latest_trade = entry['latest_trade']
             tradingpairs.append(tradingpair)
-        
+
         return tradingpairs
-    
+
     def listofpairs(self):
         pass
-    
+
     def _getdata(self, url, data = ""):
         '''
         Wrapper method
         '''
         request = Request(url)
-        
+
         if data != "":
-            request = Request(url, urlencode(data))
-            
+            request.data = urlencode(data).encode("utf-8")
+
         try:
             response = urlopen(request)
         except HTTPError as e:
@@ -115,4 +118,4 @@ class API(object):
         else:
             # Everything is fine.
             return response.read()
-            
+
